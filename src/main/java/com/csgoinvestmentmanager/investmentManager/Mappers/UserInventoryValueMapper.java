@@ -1,0 +1,15 @@
+package com.csgoinvestmentmanager.investmentManager.Mappers;
+
+
+import com.csgoinvestmentmanager.investmentManager.dto.UserInventoryValueDto;
+import com.csgoinvestmentmanager.investmentManager.model.UserInvenoryValue;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+
+@Mapper
+public interface UserInventoryValueMapper {
+
+    UserInventoryValueMapper INSTANCE = Mappers.getMapper(UserInventoryValueMapper.class);
+
+    UserInventoryValueDto toDto(UserInvenoryValue userItem);
+}
