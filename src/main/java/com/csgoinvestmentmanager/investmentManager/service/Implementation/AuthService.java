@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.csgoinvestmentmanager.investmentManager.Exeptions.SpringRedditException;
+import com.csgoinvestmentmanager.investmentManager.config.AppConfig;
 import com.csgoinvestmentmanager.investmentManager.dto.AccessTokenAndAuth;
 import com.csgoinvestmentmanager.investmentManager.dto.AuthenticationResponse;
 import com.csgoinvestmentmanager.investmentManager.dto.LoginRequest;
@@ -58,6 +59,8 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final AppUserService appUserService;
     private final RoleRepo roleRepo;
+    private final AppConfig appConfig;
+
 
 
     public void signup(RegisterRequest registerRequest){
@@ -73,7 +76,7 @@ public class AuthService {
         String token = generateVerificationToken(user);
         mailService.sendMail(new NotificationEmail("Plese Activate your account", user.getEmail(), "Thank you for signing up to Spring Reddit, " +
                 "please click on the below url to activate your account : " +
-                "http://localhost:8080/api/auth/accountVerification/" + token));
+                appConfig.getUrl() +  "/api/auth/accountVerification/" + token));
     }
 
     private String generateVerificationToken(AppUser user) {
