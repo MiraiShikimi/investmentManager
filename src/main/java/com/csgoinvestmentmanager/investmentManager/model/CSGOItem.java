@@ -19,7 +19,7 @@ public class CSGOItem implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
-    @Column(name = "hash_name", unique = true, nullable = false, length = 100)
+    @Column(name = "hash_name", unique = true, nullable = false, length = 175)
     private String hashName;
     @Column(name = "display_name", length = 100)
     private String displayName;
