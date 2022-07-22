@@ -15,6 +15,6 @@ public class CollectionThread implements Runnable {
     public void run() {
         Timer timer = new Timer();
 
-        timer.scheduleAtFixedRate(priceUpdateTask,0,20*60*1000);
+        timer.scheduleAtFixedRate(priceUpdateTask,0,4*60*60*1000);
     }
 }
