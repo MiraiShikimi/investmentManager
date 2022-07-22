@@ -41,11 +41,13 @@ public class UserInventoryValueService {
         for (AppUser appUser: userItemRepo.findDistinctId()) {
             UserInvenoryValue userInvenoryValue = new UserInvenoryValue();
             inventoryValue = ZERO;
+
             log.info("running calcularions for " + appUser.getUsername());
 
             for (UserItem userItem: userItemRepo.findAllbyUserId(appUser)
                  ) {
                 System.out.println("running " +inventoryValue);
+
                 inventoryValue = inventoryValue.add(valueOf(userItem.getQuantity()).multiply(userItem.getCsgoItem().getLowestPrice()));
             }
             System.out.println(inventoryValue);

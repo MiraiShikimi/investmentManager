@@ -76,7 +76,7 @@ public class CSGOItemResource {
         );
     }
 
-    @GetMapping("/updateprice/all")
+    @PutMapping("/updateprice/all")
     public ResponseEntity<Response> refreshAllCSGOItem() {
         System.out.println("refreshing items");
         log.info("refreshing items");
