@@ -23,6 +23,11 @@ public class ValveApi {
     public BigDecimal getItemPriceFromValveApi(String itemName, BigDecimal currentPrice){
 
         BigDecimal itemPrice = currentPrice;
+        try{
+         Thread.sleep(10);
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try {
 
@@ -35,17 +40,13 @@ public class ValveApi {
             conn.connect();
 
             System.out.println(url);
-            int responseCode = 0;
-            try {
+
+
                 //Check if connect is made
-                responseCode = conn.getResponseCode();
-            }catch (IOException e){
-                System.out.println("it errored here");
-                e.printStackTrace();
-            }
+            int responseCode = conn.getResponseCode();
+
 
             if (responseCode == 429) {
-                System.out.println("now it come to here");
                 Thread.sleep(60000);
                 throw new Http429Expection("Too many Requests");
 
