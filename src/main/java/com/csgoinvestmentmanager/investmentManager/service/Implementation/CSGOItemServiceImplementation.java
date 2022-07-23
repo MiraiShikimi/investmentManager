@@ -109,7 +109,7 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
 
             price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
         } catch (Http429Expection e) {
-
+            e.printStackTrace();
             price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
         }
         tempItem.setLowestPrice(price);
