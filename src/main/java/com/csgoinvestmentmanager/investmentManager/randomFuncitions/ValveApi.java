@@ -58,7 +58,7 @@ public class ValveApi {
                 throw new RuntimeException("HttpResponseCode: " + responseCode);
             } else {
 
-                Scanner scanner = new Scanner(url.openStream());
+                Scanner scanner = new Scanner(conn.getInputStream());
 
                 String apiReqquest = null;
                 while (scanner.hasNext()) {
