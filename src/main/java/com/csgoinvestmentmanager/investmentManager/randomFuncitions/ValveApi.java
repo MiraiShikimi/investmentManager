@@ -20,9 +20,9 @@ public class ValveApi {
      * @param itemName the item hash name
      * @return the lowest selling price of the iteam
      */
-    public BigDecimal getItemPriceFromValveApi(String itemName ){
+    public BigDecimal getItemPriceFromValveApi(String itemName, BigDecimal currentPrice){
 
-        BigDecimal itemPrice = BigDecimal.ZERO;
+        BigDecimal itemPrice = currentPrice;
 
         try {
 
@@ -78,15 +78,20 @@ public class ValveApi {
             }
 
         } catch (ProtocolException e) {
+            System.out.println("protocol expection");
             e.printStackTrace();
         } catch (MalformedURLException e) {
+            System.out.println("protocol expection");
             e.printStackTrace();
         } catch (IOException e) {
+            System.out.println("IOExeption expection");
             e.printStackTrace();
         } catch (ParseException e) {
+            System.out.println("Parese expection");
             e.printStackTrace();
         }
         catch (InterruptedException e) {
+            System.out.println("Interrupted expection");
             e.printStackTrace();
         }
         return itemPrice;

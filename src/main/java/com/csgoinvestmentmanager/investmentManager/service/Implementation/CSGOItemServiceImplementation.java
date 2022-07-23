@@ -32,7 +32,7 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
                 .replaceAll("%29",")")
                 .replaceAll("%E2%98%85","★")
                 .replaceAll("%26","&"));
-        csgoItem.setLowestPrice(valveApi.getItemPriceFromValveApi(csgoItem.getHashName()));
+        csgoItem.setLowestPrice(valveApi.getItemPriceFromValveApi(csgoItem.getHashName(),csgoItem.getLowestPrice()));
         log.info("saving new server: {}", csgoItem.getDisplayName());
         return csgoItemRepository.save(csgoItem);
     }
@@ -66,10 +66,10 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
         try {
 
 
-            price = valveApi.getItemPriceFromValveApi(csgoItem.getHashName());
+            price = valveApi.getItemPriceFromValveApi(csgoItem.getHashName(),csgoItem.getLowestPrice());
         } catch (Http429Expection e) {
 
-            price = valveApi.getItemPriceFromValveApi(csgoItem.getHashName());
+            price = valveApi.getItemPriceFromValveApi(csgoItem.getHashName(),csgoItem.getLowestPrice());
         }
         csgoItem.setLowestPrice(price);
         return csgoItemRepository.save(csgoItem);
@@ -91,10 +91,10 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
         try {
 
 
-            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName());
+            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
         } catch (Http429Expection e) {
 
-            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName());
+            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
         }
         tempItem.setLowestPrice(price);
         return csgoItemRepository.save(tempItem);
@@ -103,14 +103,14 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
     @Override
     public CSGOItem refresh(CSGOItem tempItem) {
         log.info("updating Item price");
-        BigDecimal price;
+        BigDecimal price = tempItem.getLowestPrice();
         try {
 
 
-            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName());
+            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
         } catch (Http429Expection e) {
 
-            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName());
+            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
         }
         tempItem.setLowestPrice(price);
         return csgoItemRepository.save(tempItem);
