@@ -35,11 +35,17 @@ public class ValveApi {
             conn.connect();
 
             System.out.println(url);
-
-            //Check if connect is made
-            int responseCode = conn.getResponseCode();
+            int responseCode = 0;
+            try {
+                //Check if connect is made
+                responseCode = conn.getResponseCode();
+            }catch (IOException e){
+                System.out.println("it errored here");
+                e.printStackTrace();
+            }
 
             if (responseCode == 429) {
+                System.out.println("now it come to here");
                 Thread.sleep(60000);
                 throw new Http429Expection("Too many Requests");
 
