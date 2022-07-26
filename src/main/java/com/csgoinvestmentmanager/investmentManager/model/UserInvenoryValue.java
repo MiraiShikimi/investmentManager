@@ -25,6 +25,9 @@ public class UserInvenoryValue {
     @Column(name = "inventory_value", nullable = false)
     BigDecimal inventoryValue;
 
+    @Column(name = "inventory_value_taxed", nullable = false)
+    BigDecimal inventoryValueTaxed;
+
     @Column(name = "date_of_value",nullable = false)
     LocalDateTime dateOfValue;
 

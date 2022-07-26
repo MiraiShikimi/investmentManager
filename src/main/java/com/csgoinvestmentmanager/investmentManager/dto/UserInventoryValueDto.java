@@ -13,6 +13,7 @@ public class UserInventoryValueDto implements Serializable {
 
     private Long id;
     private BigDecimal inventoryValue;
+    private BigDecimal inventoryValueTaxed;
     private LocalDateTime dateOfValue;
   //  private Long appUserId;
 }

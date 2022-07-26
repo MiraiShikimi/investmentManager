@@ -33,7 +33,8 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info(request.getServletPath() +  "   requested for authorization");
         if(request.getServletPath().equals("/login") || request.getServletPath().equals("/api/auth/refresh/token")
-                || request.getServletPath().equals("/api/auth/signup") || request.getServletPath().equals("/swagger-ui")) {
+                || request.getServletPath().equals("/api/auth/signup") || request.getServletPath().equals("/swagger-ui") || request.getServletPath().equals("/sw.js")
+                || request.getServletPath().equals("/favicon.ico")) {
             log.info("skiping authorization");
             filterChain.doFilter(request,response);
         } else {
