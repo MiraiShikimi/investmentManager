@@ -24,7 +24,7 @@ public class ValveApi {
 
         BigDecimal itemPrice = currentPrice;
         try{
-         Thread.sleep(10);
+         Thread.sleep(50);
         }catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -99,6 +99,9 @@ public class ValveApi {
         }
         catch (InterruptedException e) {
             System.out.println("Interrupted expection");
+            e.printStackTrace();
+        }catch (RuntimeException e){
+            System.out.println("There was a run time exception, So the price was not updated");
             e.printStackTrace();
         }
         return itemPrice;
