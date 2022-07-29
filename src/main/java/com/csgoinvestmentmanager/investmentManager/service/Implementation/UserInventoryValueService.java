@@ -78,7 +78,6 @@ public class UserInventoryValueService {
         List<UserInvenoryValue> theList = userInventoryValueRepo.findAllByAppUser(appuser).stream().toList();
         List<UserInventoryValueDto> dtoList = new ArrayList<>();
         theList.forEach(userInventoryValue ->  dtoList.add(UserInventoryValueMapper.INSTANCE.toDto(userInventoryValue)));
-        dtoList.forEach(System.out::println);
         return dtoList;
     }
 }
