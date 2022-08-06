@@ -10,8 +10,9 @@ import java.io.Serializable;
 @Data
 public class UserItemDto implements Serializable {
 
+    private CSGOItem csgoItem;
     private Long id;
     private Long quantity;
-    private CSGOItem csgoItem;
+
 
 }

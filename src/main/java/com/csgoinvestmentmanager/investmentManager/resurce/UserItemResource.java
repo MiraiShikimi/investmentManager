@@ -72,7 +72,7 @@ public class UserItemResource {
         );
     }
 
-    @PutMapping("/update")
+    @PutMapping("/quantity")
     public ResponseEntity<Response> updateUserItem(@RequestBody @Valid UserItemDto userItemDto){
         return ResponseEntity.ok(
                 Response.builder()
