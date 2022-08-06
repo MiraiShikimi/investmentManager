@@ -77,7 +77,7 @@ public class UserItemResource {
         return ResponseEntity.ok(
                 Response.builder()
                         .timeStamp(now())
-                        .data(of("userItem", userItemService.update(userItemDto).getCsgoItem()))
+                        .data(of("userItem", "userItemService.update(userItemDto).getCsgoItem()"))
                         .message("user item updated")
                         .status(OK)
                         .statusCode(OK.value())
