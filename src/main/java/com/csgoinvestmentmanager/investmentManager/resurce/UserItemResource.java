@@ -73,7 +73,7 @@ public class UserItemResource {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Response> updateUserItem(@RequestBody @Valid UserItemDto userItemDto){
+    public ResponseEntity<Response> updateUserItem(@RequestBody @Valid String userItemDto){
         return ResponseEntity.ok(
                 Response.builder()
                         .timeStamp(now())
