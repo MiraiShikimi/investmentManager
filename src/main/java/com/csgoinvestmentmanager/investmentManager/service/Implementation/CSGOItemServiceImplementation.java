@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,9 +40,10 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
 
     @Override
     public CSGOItem get(Long id) {
-        log.info("Fetching csgo item by hash name {}", id);
+        log.info("Fetching csgo item by id  {}", id);
 
-        return csgoItemRepository.findById(id).get();
+        return csgoItemRepository.findById(id).orElseThrow(RuntimeException::new);
+
     }
 
     @Override

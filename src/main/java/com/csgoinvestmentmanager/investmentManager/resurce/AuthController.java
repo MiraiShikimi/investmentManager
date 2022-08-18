@@ -1,4 +1,4 @@
-package com.csgoinvestmentmanager.investmentManager.controller;
+package com.csgoinvestmentmanager.investmentManager.resurce;
 
 import com.csgoinvestmentmanager.investmentManager.dto.AuthenticationResponse;
 import com.csgoinvestmentmanager.investmentManager.dto.LoginRequest;

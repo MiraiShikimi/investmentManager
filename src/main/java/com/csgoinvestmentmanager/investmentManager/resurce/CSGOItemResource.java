@@ -42,7 +42,7 @@ public class CSGOItemResource {
                 Response.builder()
                         .timeStamp(now())
                         .data(of("csgoItem", csgoItemService.get(id)))
-                        .message("csgo Item retried")
+                        .message("csgo Item retrived")
                         .status(OK)
                         .statusCode(OK.value())
                         .build()
