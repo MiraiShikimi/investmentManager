@@ -89,7 +89,7 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
     public CSGOItem refresh(Long id) {
         log.info("updating Item price");
         CSGOItem tempItem = csgoItemRepository.findById(id).get();
-        BigDecimal price;
+        BigDecimal price = tempItem.getLowestPrice();
         try {
 
 
@@ -120,6 +120,7 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
 
     @Override
     public String refreshAllPrices() {
+        System.out.println("huh");
         for (CSGOItem csgoitem : csgoItemRepository.findAll()){
             System.out.println(csgoitem.getHashName());
             refresh(csgoitem);

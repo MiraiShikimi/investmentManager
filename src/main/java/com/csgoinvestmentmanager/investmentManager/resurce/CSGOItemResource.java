@@ -27,7 +27,7 @@ public class CSGOItemResource {
                 Response.builder()
                         .timeStamp(now())
                         .data(of("csgoItems", csgoItemService.list(50)))
-                        .message("csgo items retrived")
+                        .message("csgo items retrieved")
                         .status(OK)
                         .statusCode(OK.value())
                         .build()
@@ -50,7 +50,7 @@ public class CSGOItemResource {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Response> saveServer(@RequestBody @Valid CSGOItem csgoItem) {
+    public ResponseEntity<Response> saveCSGOItem(@RequestBody @Valid CSGOItem csgoItem) {
 
         return ResponseEntity.ok(
                 Response.builder()
@@ -69,7 +69,7 @@ public class CSGOItemResource {
                 Response.builder()
                         .timeStamp(now())
                         .data(of("csgoItem", csgoItemService.refresh(id)))
-                        .message("CSGO Item created")
+                        .message("CSGO Item price updated")
                         .status(CREATED)
                         .statusCode(CREATED.value())
                         .build()
@@ -107,7 +107,7 @@ public class CSGOItemResource {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Response> deleteServer(@PathVariable("id") Long id){
+    public ResponseEntity<Response> deleteCSGOItem(@PathVariable("id") Long id){
         return ResponseEntity.ok(
                 Response.builder()
                         .timeStamp(now())
