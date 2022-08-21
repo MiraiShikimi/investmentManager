@@ -36,13 +36,13 @@ class UserItemRepositoryTest {
         //given
         csgoItem.setHashName("Gamma%20Case");
         csgoItem.setImageURL("ImageUrl");
+        csgoItemRepository.save(csgoItem);
 
         appuser.setEmail("testEmail@test.com");
         appuser.setUsername("tester");
         appuser.setPassword("tester");
-
         appUserRepo.save(appuser);
-        csgoItemRepository.save(csgoItem);
+
 
         userItem.setAppUser(appuser);
         userItem.setQuantity((long)10);
@@ -79,4 +79,6 @@ class UserItemRepositoryTest {
     @Test
     void findAllbyUserId() {
     }
+
+
 }
