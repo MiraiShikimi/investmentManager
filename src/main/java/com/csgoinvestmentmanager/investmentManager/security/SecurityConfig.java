@@ -3,6 +3,7 @@ package com.csgoinvestmentmanager.investmentManager.security;
 import com.csgoinvestmentmanager.investmentManager.filer.CustomAuthFilter;
 import com.csgoinvestmentmanager.investmentManager.filer.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +27,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Value("${key}")
+    private String key;
+
 
 
     @Override
@@ -55,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().anyRequest().authenticated();
       //  http.addFilter(new CustomAuthFilter(authenticationManagerBean()));
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(key), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

@@ -22,6 +22,7 @@ import com.csgoinvestmentmanager.investmentManager.service.intefaces.AppUserServ
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,6 +50,9 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 @Transactional
 @Slf4j
 public class AuthService {
+
+    @Value("${key}")
+    private String key;
 
     private final PasswordEncoder passwordEncoder;
     private final AppUserRepo appUserRepo;
@@ -143,7 +147,7 @@ public class AuthService {
             try {
                 log.info("passed the if statement");
                 String refresh_token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                Algorithm algorithm = Algorithm.HMAC256(key.getBytes());
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
                 String username = decodedJWT.getSubject();
