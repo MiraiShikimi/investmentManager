@@ -27,7 +27,6 @@ public class JwtProvider {
     private String key;
 
     public AccessTokenAndAuth generateToken(Authentication authentication){
-        log.error("THE KEY IS     " + key);
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256(key.getBytes());
         String access_token = JWT.create()
