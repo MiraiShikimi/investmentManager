@@ -29,7 +29,6 @@ public class UserItemServiceImplemantation implements UserItemService {
         log.info("adding new UserItem: {}", userItem.getCsgoItem().getDisplayName());
         log.info("username " + authService.getCurrentUser().getUsername());
         userItem.setAppUser(authService.getCurrentUser());
-        log.info("above me is the error");
         return userItemRepository.save(userItem);
     }
 

@@ -3,6 +3,7 @@ package com.csgoinvestmentmanager.investmentManager.security;
 import com.csgoinvestmentmanager.investmentManager.filer.CustomAuthFilter;
 import com.csgoinvestmentmanager.investmentManager.filer.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +27,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Value("${key}")
+    private String key;
+
 
 
     @Override
@@ -47,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/swagger-ui",
                 "/webjars/**").permitAll();
         http.authorizeRequests().antMatchers(GET,"/api/user/**","/api/list").hasAnyAuthority("ROLE_USER");
-      //  http.authorizeRequests().antMatchers(POST,"/api/role/save/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(POST,"/api/role/save/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().antMatchers(POST,"/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().antMatchers(POST,"/csgoitem/save","/csgoitem/refresh/all").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().antMatchers("/useritem/**").hasAnyAuthority("ROLE_USER");
@@ -55,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().anyRequest().authenticated();
       //  http.addFilter(new CustomAuthFilter(authenticationManagerBean()));
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CustomAuthorizationFilter(key), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

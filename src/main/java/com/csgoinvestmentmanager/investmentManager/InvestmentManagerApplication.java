@@ -4,14 +4,19 @@ import com.csgoinvestmentmanager.investmentManager.Threads.CollectionThread;
 import com.csgoinvestmentmanager.investmentManager.config.SwaggerConfiguration;
 import com.csgoinvestmentmanager.investmentManager.model.AppUser;
 import com.csgoinvestmentmanager.investmentManager.model.Role;
+import com.csgoinvestmentmanager.investmentManager.service.Implementation.AppUserServiceImplementation;
 import com.csgoinvestmentmanager.investmentManager.service.intefaces.AppUserService;
 import com.csgoinvestmentmanager.investmentManager.timedTaks.PriceUpdateTask;
 import io.swagger.models.Swagger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,8 +24,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Timer;
 
 @SpringBootApplication
@@ -28,20 +35,25 @@ import java.util.Timer;
 @Import(SwaggerConfiguration.class)
 public class InvestmentManagerApplication {
 
+
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(InvestmentManagerApplication.class, args);
 
 	}
 
 
+
+/*
 	@Bean
-	CommandLineRunner run(AppUserService userService,CollectionThread collectionThread) {
+	CommandLineRunner run() {
 		return args -> {
 
 
 			Thread thread = new Thread(collectionThread);
 			thread.start();
-/*
+
 			userService.saveRole(new Role(null, "ROLE_USER"));
 			userService.saveRole(new Role(null, "ROLE_MANAGER"));
 			userService.saveRole(new Role(null, "ROLE_ADMIN"));
@@ -59,14 +71,13 @@ public class InvestmentManagerApplication {
 			userService.addRoleToUser("123", "ROLE_ADMIN");
 			userService.addRoleToUser("123", "ROLE_USER");
 
- */
 
 		};
 
 
 	}
 
-
+*/
 
 
 
@@ -74,7 +85,7 @@ public class InvestmentManagerApplication {
 	public CorsFilter corsFilter() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.setAllowCredentials(true);
-		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200","https://angular-investmentapp.herokuapp.com/"));
+		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200","https://steam-invest-tracker.web.app/"));
 		corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
 				"Accept", "Authorization", "Origin, Accept", "X-Requested-With",
 				"Access-Control-Request-Method", "Access-Control-Request-Headers"));

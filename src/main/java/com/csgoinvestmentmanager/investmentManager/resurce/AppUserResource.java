@@ -33,6 +33,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AppUserResource {
+
     private final AppUserService appUserService;
 
     @GetMapping("/list")

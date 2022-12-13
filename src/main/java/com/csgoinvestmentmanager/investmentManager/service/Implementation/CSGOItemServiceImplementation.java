@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,9 +40,10 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
 
     @Override
     public CSGOItem get(Long id) {
-        log.info("Fetching csgo item by hash name {}", id);
+        log.info("Fetching csgo item by id  {}", id);
 
-        return csgoItemRepository.findById(id).get();
+        return csgoItemRepository.findById(id).orElseThrow(RuntimeException::new);
+
     }
 
     @Override
@@ -87,7 +89,7 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
     public CSGOItem refresh(Long id) {
         log.info("updating Item price");
         CSGOItem tempItem = csgoItemRepository.findById(id).get();
-        BigDecimal price;
+        BigDecimal price = tempItem.getLowestPrice();
         try {
 
 
@@ -118,6 +120,7 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
 
     @Override
     public String refreshAllPrices() {
+        System.out.println("huh");
         for (CSGOItem csgoitem : csgoItemRepository.findAll()){
             System.out.println(csgoitem.getHashName());
             refresh(csgoitem);
