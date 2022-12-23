@@ -41,6 +41,12 @@ public class AuthController {
         return new ResponseEntity<>("Account Activated Successfully", OK);
     }
 
+    @GetMapping("profilePicture/{url}")
+    public ResponseEntity<String> changeProfilePicture(@PathVariable String url) {
+        authService.changeProfilePicture(url);
+        return new ResponseEntity<>("{ProfilePicture: Changed}", OK);
+    }
+
 
     @PostMapping("/login")
     public AuthenticationResponse login(@RequestBody LoginRequest loginRequest){
