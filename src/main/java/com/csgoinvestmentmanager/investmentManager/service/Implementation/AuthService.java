@@ -73,13 +73,14 @@ public class AuthService {
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setEnabled(false);
+        user.setPictureUrl("default");
         addRoleToUser(user,"ROLE_USER");
 
         appUserRepo.save(user);
 
         String token = generateVerificationToken(user);
 
-        mailService.sendMail(new NotificationEmail("Plese Activate your account", user.getEmail(), "Thank you for signing up to Spring Reddit, " +
+        mailService.sendMail(new NotificationEmail("Plese Activate your account", user.getEmail(), "Thank you for signing up, " +
                 "please click on the below url to activate your account : " +
                 appConfig.getUrl() +  "/api/auth/accountVerification/" + token));
     }
@@ -113,11 +114,13 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         AccessTokenAndAuth token = jwtProvider.generateToken(authenticate);
         String refreshToken = jwtProvider.generateRefreshToken(authenticate);
+        AppUser tempUser =appUserRepo.findByUsername(loginRequest.getUsername()).orElseThrow();
         return AuthenticationResponse.builder()
                 .authenticationToken(token.getAccessToken())
                 .refreshToken(refreshToken)
                 .username(loginRequest.getUsername())
                 .roles(token.getAuthorities())
+                .pictureUrl(tempUser.getPictureUrl())
                 .build();
 
     }
@@ -133,6 +136,15 @@ public class AuthService {
         log.info(tempuser.getEmail());
         log.info("returning");
         return tempuser;
+    }
+
+
+
+    public void changeProfilePicture(String url) {
+        log.info("changing user profile picture");
+        AppUser tempUser = getCurrentUser();
+        tempUser.setPictureUrl(url);
+        appUserRepo.save(tempUser);
     }
 
 

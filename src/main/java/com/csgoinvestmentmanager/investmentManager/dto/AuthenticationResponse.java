@@ -17,4 +17,5 @@ public class AuthenticationResponse {
     private String refreshToken;
     private String username;
     private List<String> roles;
+    private String pictureUrl;
 }

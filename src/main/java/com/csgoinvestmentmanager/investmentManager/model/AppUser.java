@@ -29,6 +29,9 @@ public class AppUser implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
     private boolean enabled;
+    @Column(name = "profile_picture")
+    private String pictureUrl;
+
 
 
 }
