@@ -48,8 +48,8 @@ public class UserInventoryValueService {
 
             log.info("running calcularions for " + appUser.getUsername());
 
-            for (UserItem userItem: userItemRepo.findAllbyUserId(appUser)
-                 ) {
+            for (UserItem userItem: userItemRepo.findAllbyUserId(appUser))
+            {
                 System.out.println("running " + inventoryValue);
                 System.out.println("running tax " + inventoryValueTaxed);
                 if(0 > userItem.getCsgoItem().getLowestPrice().compareTo(new BigDecimal("0.22"))){
