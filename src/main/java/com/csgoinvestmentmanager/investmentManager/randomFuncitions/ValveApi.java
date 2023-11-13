@@ -30,6 +30,8 @@ public class ValveApi {
         }
 
         try {
+
+
             URL url = new URL("https://steamcommunity.com/market/priceoverview/?currency=3&country=DE&appid=730&market_hash_name=" +
                     itemName);
 
@@ -39,12 +41,15 @@ public class ValveApi {
 
             System.out.println(url);
 
+
                 //Check if connect is made
             int responseCode = conn.getResponseCode();
+
 
             if (responseCode == 429) {
                 Thread.sleep(60000);
                 throw new Http429Expection("Too many Requests");
+
             }
 
             // 200 OK
@@ -75,6 +80,7 @@ public class ValveApi {
                 System.out.println(((recivedData).get("lowest_price").toString().substring(0,4).replace(',','.')));
                 conn.disconnect();
 
+
                 System.out.println("done :D");
             }
 
@@ -99,6 +105,7 @@ public class ValveApi {
             e.printStackTrace();
         }
         return itemPrice;
+
     }
 
 
