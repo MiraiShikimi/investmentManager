@@ -65,7 +65,7 @@ public class UserInventoryValueService {
             System.out.println(inventoryValue);
             userInvenoryValue.setInventoryValueTaxed(inventoryValueTaxed);
             userInvenoryValue.setInventoryValue(inventoryValue);
-            userInvenoryValue.setDateOfValue(LocalDateTime.now());
+            userInvenoryValue.setDateOfValue(LocalDateTime.now(ZoneOffset.UTC));
             userInvenoryValue.setAppUser(appUserRepo.findById(appUser.getId()).get());
 
             userInventoryValueRepo.save(userInvenoryValue);
