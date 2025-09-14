@@ -17,8 +17,8 @@ public class AfterStartup {
 
         System.out.println("\n \n \n hello world, I have just started up \n \n \n  \n \n \n ");
 
-        Thread thread = new Thread(collectionThread);
-        thread.start();
+        //Thread thread = new Thread(collectionThread);
+        //thread.start();
     }
 
 }
