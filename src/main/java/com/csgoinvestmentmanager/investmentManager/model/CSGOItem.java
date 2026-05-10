@@ -8,11 +8,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-
 @Entity
-@Table(name = "csgoitem" )
+@Table(name = "csgoitem")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CSGOItem implements Serializable {
 
     @Id
@@ -28,52 +28,8 @@ public class CSGOItem implements Serializable {
     @Column(name = "image_url")
     private String imageURL;
 
-
-    public CSGOItem() {
-    }
-
     public CSGOItem(String hashName, String imageURL) {
         this.hashName = hashName;
         this.imageURL = imageURL;
-    }
-
-    public String getHashName() {
-        return hashName;
-    }
-
-    public void setHashName(String hashName) {
-        this.hashName = hashName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public BigDecimal getLowestPrice() {
-        return lowestPrice;
-    }
-
-    public void setLowestPrice(BigDecimal lowestPrice) {
-        this.lowestPrice = lowestPrice;
-    }
-
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

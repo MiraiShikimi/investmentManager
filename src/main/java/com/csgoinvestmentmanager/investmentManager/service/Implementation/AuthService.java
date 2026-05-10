@@ -58,6 +58,7 @@ public class AuthService {
     private final AppUserRepo appUserRepo;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
+    private final ObjectMapper objectMapper;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
@@ -177,7 +178,7 @@ public class AuthService {
                 authenticationResponse.setRefreshToken(refresh_token);
                 authenticationResponse.setUsername(username);
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+                objectMapper.writeValue(response.getOutputStream(), tokens);
             }catch (Exception exception) {
                 log.error("request token timed out " + exception.getMessage());
                 response.setHeader("error", exception.getMessage());
@@ -186,7 +187,7 @@ public class AuthService {
                 Map<String, String> error = new HashMap<>();
                 error.put("error_message", exception.getMessage());
                 response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
+                objectMapper.writeValue(response.getOutputStream(), error);
 
             }
         } else {

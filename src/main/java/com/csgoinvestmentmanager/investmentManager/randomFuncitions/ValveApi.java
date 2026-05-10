@@ -3,6 +3,7 @@ package com.csgoinvestmentmanager.investmentManager.randomFuncitions;
 import com.csgoinvestmentmanager.investmentManager.Exeptions.Http429Expection;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -13,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Component
+@Slf4j
 public class ValveApi {
 
     private static final int CONNECT_TIMEOUT_MS  = 10_000;
@@ -29,13 +31,12 @@ public class ValveApi {
         try {
             return fetchPrice(itemName, currentPrice);
         } catch (Http429Expection e) {
-            // First 429: already slept inside fetchPrice; sleep again before the retry
-            // so the retry doesn't immediately hit the rate limit a second time.
+            log.warn("Rate limited by Steam API for item '{}', sleeping {}s before retry", itemName, RATE_LIMIT_SLEEP_MS / 1000);
             try { Thread.sleep(RATE_LIMIT_SLEEP_MS); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
             try {
                 return fetchPrice(itemName, currentPrice);
             } catch (Http429Expection e2) {
-                // Still rate-limited after retry — skip this item, keep existing price
+                log.error("Still rate limited after retry for item '{}', keeping existing price {}", itemName, currentPrice);
                 return currentPrice;
             }
         }
@@ -57,6 +58,7 @@ public class ValveApi {
                 throw new Http429Expection("Too many requests");
             }
             if (responseCode != 200) {
+                log.warn("Unexpected response code {} for item '{}', keeping existing price", responseCode, itemName);
                 return currentPrice;
             }
 
@@ -67,11 +69,14 @@ public class ValveApi {
 
             JsonNode data = objectMapper.readTree(body);
             String raw = data.get("lowest_price").asText().substring(0, 4).replace(',', '.').replaceAll("-", "0");
-            return new BigDecimal(raw);
+            BigDecimal newPrice = new BigDecimal(raw);
+            log.debug("Updated price for '{}': {} -> {}", itemName, currentPrice, newPrice);
+            return newPrice;
 
         } catch (Http429Expection e) {
             throw e;
         } catch (IOException e) {
+            log.error("IO error fetching price for item '{}': {}", itemName, e.getMessage());
             return currentPrice;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
