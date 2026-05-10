@@ -37,7 +37,7 @@ public class CSGOItemResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<Response> getCSGOItem(@PathVariable("id") Long id) {
-        System.out.println("NOT WORKING");
+        log.info("fetching csgo item by id: {}", id);
         return ResponseEntity.ok(
                 Response.builder()
                         .timeStamp(now())
@@ -78,8 +78,7 @@ public class CSGOItemResource {
 
     @PutMapping("/updateprice/all")
     public ResponseEntity<Response> refreshAllCSGOItem() {
-        System.out.println("refreshing items");
-        log.info("refreshing items");
+        log.info("refreshing all item prices");
         return ResponseEntity.ok(
                 Response.builder()
                         .timeStamp(now())

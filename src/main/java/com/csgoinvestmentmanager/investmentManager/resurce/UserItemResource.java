@@ -5,6 +5,7 @@ import com.csgoinvestmentmanager.investmentManager.model.Response;
 import com.csgoinvestmentmanager.investmentManager.model.UserItem;
 import com.csgoinvestmentmanager.investmentManager.service.Implementation.UserItemServiceImplemantation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/useritem")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class UserItemResource {
     private final UserItemServiceImplemantation userItemService;
 
@@ -60,7 +62,7 @@ public class UserItemResource {
 
     @PostMapping("/save")
     public ResponseEntity<Response> addUserItem(@RequestBody @Valid UserItem userItem){
-        System.out.println("\n \n processing user item" + userItem.getCsgoItem().getDisplayName());
+        log.info("processing user item: {}", userItem.getCsgoItem().getDisplayName());
         return ResponseEntity.ok(
                 Response.builder()
                         .timeStamp(now())

@@ -1,9 +1,8 @@
 package com.csgoinvestmentmanager.investmentManager.randomFuncitions;
 
 import com.csgoinvestmentmanager.investmentManager.Exeptions.Http429Expection;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -16,9 +15,11 @@ import java.net.URL;
 @Component
 public class ValveApi {
 
-    private static final int CONNECT_TIMEOUT_MS = 10_000;
-    private static final int READ_TIMEOUT_MS    = 10_000;
+    private static final int CONNECT_TIMEOUT_MS  = 10_000;
+    private static final int READ_TIMEOUT_MS     = 10_000;
     private static final int RATE_LIMIT_SLEEP_MS = 65_000;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Gets the lowest selling price from the Steam Community market.
@@ -64,13 +65,13 @@ public class ValveApi {
                 body = reader.readLine();
             }
 
-            JSONObject data = (JSONObject) new JSONParser().parse(body);
-            String raw = data.get("lowest_price").toString().substring(0, 4).replace(',', '.').replaceAll("-", "0");
+            JsonNode data = objectMapper.readTree(body);
+            String raw = data.get("lowest_price").asText().substring(0, 4).replace(',', '.').replaceAll("-", "0");
             return new BigDecimal(raw);
 
         } catch (Http429Expection e) {
             throw e;
-        } catch (ParseException | IOException e) {
+        } catch (IOException e) {
             return currentPrice;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

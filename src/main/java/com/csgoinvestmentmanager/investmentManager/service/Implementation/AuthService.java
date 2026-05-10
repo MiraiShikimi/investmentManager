@@ -129,7 +129,7 @@ public class AuthService {
     public AppUser getCurrentUser() {
         String principal = (String) SecurityContextHolder.
                 getContext().getAuthentication().getPrincipal();
-        System.out.println(principal);
+        log.debug("resolving current user: {}", principal);
         log.info("it breaks before after");
         AppUser tempuser =appUserRepo.findByUsername(principal)
                 .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal));
