@@ -24,6 +24,8 @@ class CSGOItemServiceImplementationTest {
 
     @Mock
     private CSGOItemRepository csgoItemRepository;
+    @Mock
+    private com.csgoinvestmentmanager.investmentManager.randomFuncitions.ValveApi valveApi;
 
     private CSGOItemServiceImplementation csgoItemServiceImplementation;
     Optional<CSGOItem> testItem = Optional.of(new CSGOItem(
@@ -34,7 +36,7 @@ class CSGOItemServiceImplementationTest {
 
     @BeforeEach
     void setUp() {
-      csgoItemServiceImplementation = new CSGOItemServiceImplementation(csgoItemRepository);
+      csgoItemServiceImplementation = new CSGOItemServiceImplementation(csgoItemRepository, valveApi);
       }
 
 

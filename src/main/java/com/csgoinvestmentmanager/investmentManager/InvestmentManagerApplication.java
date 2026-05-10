@@ -1,37 +1,23 @@
 package com.csgoinvestmentmanager.investmentManager;
 
-import com.csgoinvestmentmanager.investmentManager.Threads.CollectionThread;
 import com.csgoinvestmentmanager.investmentManager.config.SwaggerConfiguration;
-import com.csgoinvestmentmanager.investmentManager.model.AppUser;
-import com.csgoinvestmentmanager.investmentManager.model.Role;
-import com.csgoinvestmentmanager.investmentManager.service.Implementation.AppUserServiceImplementation;
-import com.csgoinvestmentmanager.investmentManager.service.intefaces.AppUserService;
-import com.csgoinvestmentmanager.investmentManager.timedTaks.PriceUpdateTask;
-import io.swagger.models.Swagger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.security.KeyStore;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Timer;
 
 @SpringBootApplication
 @EnableAsync
+@EnableScheduling
 @Import(SwaggerConfiguration.class)
 public class InvestmentManagerApplication {
 

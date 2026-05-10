@@ -1,6 +1,5 @@
 package com.csgoinvestmentmanager.investmentManager.service.Implementation;
 
-import com.csgoinvestmentmanager.investmentManager.Exeptions.Http429Expection;
 import com.csgoinvestmentmanager.investmentManager.model.CSGOItem;
 import com.csgoinvestmentmanager.investmentManager.randomFuncitions.ValveApi;
 import com.csgoinvestmentmanager.investmentManager.repository.CSGOItemRepository;
@@ -9,11 +8,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @Transactional
@@ -21,7 +21,7 @@ import java.util.Optional;
 @Slf4j
 public class CSGOItemServiceImplementation implements CSGOItemService {
     private final CSGOItemRepository csgoItemRepository;
-    ValveApi valveApi = new ValveApi();
+    private final ValveApi valveApi;
 
 
     @Override
@@ -64,15 +64,7 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
                 .replaceAll("%E2%98%85","★")
                 .replaceAll("%26","&"));
 
-        BigDecimal price;
-        try {
-
-
-            price = valveApi.getItemPriceFromValveApi(csgoItem.getHashName(),csgoItem.getLowestPrice());
-        } catch (Http429Expection e) {
-
-            price = valveApi.getItemPriceFromValveApi(csgoItem.getHashName(),csgoItem.getLowestPrice());
-        }
+        BigDecimal price = valveApi.getItemPriceFromValveApi(csgoItem.getHashName(), csgoItem.getLowestPrice());
         csgoItem.setLowestPrice(price);
         return csgoItemRepository.save(csgoItem);
     }
@@ -88,45 +80,30 @@ public class CSGOItemServiceImplementation implements CSGOItemService {
     @Override
     public CSGOItem refresh(Long id) {
         log.info("updating Item price");
-        CSGOItem tempItem = csgoItemRepository.findById(id).get();
-        BigDecimal price = tempItem.getLowestPrice();
-        try {
-
-
-            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
-        } catch (Http429Expection e) {
-
-            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
-        }
-        tempItem.setLowestPrice(price);
+        CSGOItem tempItem = csgoItemRepository.findById(id).orElseThrow(RuntimeException::new);
+        tempItem.setLowestPrice(valveApi.getItemPriceFromValveApi(tempItem.getHashName(), tempItem.getLowestPrice()));
         return csgoItemRepository.save(tempItem);
     }
 
     @Override
     public CSGOItem refresh(CSGOItem tempItem) {
         log.info("updating Item price");
-        BigDecimal price = tempItem.getLowestPrice();
-        try {
-
-
-            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
-        } catch (Http429Expection e) {
-            System.out.println(e.getMessage());
-            price = valveApi.getItemPriceFromValveApi(tempItem.getHashName(),tempItem.getLowestPrice());
-        }
-        tempItem.setLowestPrice(price);
+        tempItem.setLowestPrice(valveApi.getItemPriceFromValveApi(tempItem.getHashName(), tempItem.getLowestPrice()));
         return csgoItemRepository.save(tempItem);
     }
 
     @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public String refreshAllPrices() {
-        System.out.println("huh");
-        for (CSGOItem csgoitem : csgoItemRepository.findAll()){
-            System.out.println(csgoitem.getHashName());
-            refresh(csgoitem);
-        }
-
+        int page = 0;
+        final int pageSize = 50;
+        List<CSGOItem> batch;
+        do {
+            batch = csgoItemRepository.findAll(PageRequest.of(page++, pageSize)).getContent();
+            for (CSGOItem item : batch) {
+                refresh(item);
+            }
+        } while (batch.size() == pageSize);
         return "done";
-
     }
 }

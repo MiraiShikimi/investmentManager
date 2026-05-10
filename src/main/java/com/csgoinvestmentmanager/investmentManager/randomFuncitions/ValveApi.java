@@ -4,109 +4,79 @@ import com.csgoinvestmentmanager.investmentManager.Exeptions.Http429Expection;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Scanner;
 
-
+@Component
 public class ValveApi {
+
+    private static final int CONNECT_TIMEOUT_MS = 10_000;
+    private static final int READ_TIMEOUT_MS    = 10_000;
+    private static final int RATE_LIMIT_SLEEP_MS = 65_000;
+
     /**
-     * gets the Lowest selling price form the Steam Community market for an item defined by its hash name
-     * @param itemName the item hash name
-     * @return the lowest selling price of the iteam
+     * Gets the lowest selling price from the Steam Community market.
+     * On HTTP 429 the call sleeps 65 s then retries once.
      */
-    public BigDecimal getItemPriceFromValveApi(String itemName, BigDecimal currentPrice){
-
-        BigDecimal itemPrice = currentPrice;
-        try{
-         Thread.sleep(50);
-        }catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+    public BigDecimal getItemPriceFromValveApi(String itemName, BigDecimal currentPrice) {
         try {
-
-
-            URL url = new URL("https://steamcommunity.com/market/priceoverview/?currency=3&country=DE&appid=730&market_hash_name=" +
-                    itemName);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.connect();
-
-            System.out.println(url);
-
-
-                //Check if connect is made
-            int responseCode = conn.getResponseCode();
-
-
-            if (responseCode == 429) {
-                Thread.sleep(60000);
-                throw new Http429Expection("Too many Requests");
-
+            return fetchPrice(itemName, currentPrice);
+        } catch (Http429Expection e) {
+            // First 429: already slept inside fetchPrice; sleep again before the retry
+            // so the retry doesn't immediately hit the rate limit a second time.
+            try { Thread.sleep(RATE_LIMIT_SLEEP_MS); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+            try {
+                return fetchPrice(itemName, currentPrice);
+            } catch (Http429Expection e2) {
+                // Still rate-limited after retry — skip this item, keep existing price
+                return currentPrice;
             }
-
-            // 200 OK
-           else if (responseCode != 200) {
-                conn.disconnect();
-              //
-                throw new RuntimeException("HttpResponseCode: " + responseCode);
-            } else {
-
-                Scanner scanner = new Scanner(conn.getInputStream());
-
-                String apiReqquest = null;
-                while (scanner.hasNext()) {
-                    apiReqquest = scanner.nextLine();
-
-                }
-                //Close the scanner
-                scanner.close();
-
-
-                //JSON simple library Setup with Maven is used to convert strings to JSON
-                JSONParser parser = new JSONParser();
-                JSONObject recivedData = (JSONObject) parser.parse(apiReqquest);
-
-                System.out.println(recivedData);
-
-                itemPrice = new BigDecimal(((recivedData).get("lowest_price").toString().substring(0,4).replace(',','.').replaceAll("-","0")));
-                System.out.println(((recivedData).get("lowest_price").toString().substring(0,4).replace(',','.')));
-                conn.disconnect();
-
-
-                System.out.println("done :D");
-            }
-
-        } catch (ProtocolException e) {
-            System.out.println("protocol expection");
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            System.out.println("protocol expection");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("IOExeption expection");
-            e.printStackTrace();
-        } catch (ParseException e) {
-            System.out.println("Parese expection");
-            e.printStackTrace();
         }
-        catch (InterruptedException e) {
-            System.out.println("Interrupted expection");
-            e.printStackTrace();
-        }catch (RuntimeException e){
-            System.out.println("There was a run time exception, So the price was not updated");
-            e.printStackTrace();
-        }
-        return itemPrice;
-
     }
 
+    private BigDecimal fetchPrice(String itemName, BigDecimal currentPrice) throws Http429Expection {
+        HttpURLConnection conn = null;
+        try {
+            URL url = new URL("https://steamcommunity.com/market/priceoverview/?currency=3&country=DE&appid=730&market_hash_name=" + itemName);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
+            conn.setReadTimeout(READ_TIMEOUT_MS);
 
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == 429) {
+                Thread.sleep(RATE_LIMIT_SLEEP_MS);
+                throw new Http429Expection("Too many requests");
+            }
+            if (responseCode != 200) {
+                return currentPrice;
+            }
+
+            String body;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                body = reader.readLine();
+            }
+
+            JSONObject data = (JSONObject) new JSONParser().parse(body);
+            String raw = data.get("lowest_price").toString().substring(0, 4).replace(',', '.').replaceAll("-", "0");
+            return new BigDecimal(raw);
+
+        } catch (Http429Expection e) {
+            throw e;
+        } catch (ParseException | IOException e) {
+            return currentPrice;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return currentPrice;
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+    }
 }
