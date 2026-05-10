@@ -1,9 +1,5 @@
 package com.csgoinvestmentmanager.investmentManager.resurce;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
 import com.csgoinvestmentmanager.investmentManager.model.AppUser;
 import com.csgoinvestmentmanager.investmentManager.model.Response;
 import com.csgoinvestmentmanager.investmentManager.model.Role;
@@ -11,23 +7,9 @@ import com.csgoinvestmentmanager.investmentManager.service.intefaces.AppUserServ
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.SpringVersion;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestController
 @RequestMapping("/api")
@@ -37,8 +19,10 @@ public class AppUserResource {
     private final AppUserService appUserService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<AppUser>>getUsers(){
-        return ResponseEntity.ok().body(appUserService.getUsers());
+    public ResponseEntity<?>getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size){
+        return ResponseEntity.ok().body(appUserService.getUsers(PageRequest.of(page, size)));
     }
     /*
     @PostMapping("/user/save")

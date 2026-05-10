@@ -8,6 +8,8 @@ import com.csgoinvestmentmanager.investmentManager.repository.RoleRepo;
 import com.csgoinvestmentmanager.investmentManager.service.intefaces.AppUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -61,9 +63,9 @@ public class AppUserServiceImplementation implements AppUserService, UserDetails
     }
 
     @Override
-    public List<AppUser> getUsers() {
+    public Page<AppUser> getUsers(Pageable pageable) {
         log.info("getting users");
-        return appUserRepo.findAll();
+        return appUserRepo.findAll(pageable);
     }
 
     @Override

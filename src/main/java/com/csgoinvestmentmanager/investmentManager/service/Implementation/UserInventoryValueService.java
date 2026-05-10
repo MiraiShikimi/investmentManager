@@ -1,13 +1,10 @@
 package com.csgoinvestmentmanager.investmentManager.service.Implementation;
 
 import com.csgoinvestmentmanager.investmentManager.Mappers.UserInventoryValueMapper;
-import com.csgoinvestmentmanager.investmentManager.Mappers.UserItemMapper;
 import com.csgoinvestmentmanager.investmentManager.dto.UserInventoryValueDto;
-import com.csgoinvestmentmanager.investmentManager.dto.UserItemDto;
 import com.csgoinvestmentmanager.investmentManager.model.AppUser;
 import com.csgoinvestmentmanager.investmentManager.model.UserInvenoryValue;
 import com.csgoinvestmentmanager.investmentManager.model.UserItem;
-import com.csgoinvestmentmanager.investmentManager.repository.AppUserRepo;
 import com.csgoinvestmentmanager.investmentManager.repository.UserInventoryValueRepo;
 import com.csgoinvestmentmanager.investmentManager.repository.UserItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +18,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.*;
 
@@ -31,21 +30,23 @@ import static java.math.BigDecimal.*;
 public class UserInventoryValueService {
     private final UserInventoryValueRepo userInventoryValueRepo;
     private final UserItemRepository userItemRepo;
-    private final AppUserRepo appUserRepo;
     private final AuthService authService;
 
 
 
     public void calculateUserInventoryValues(){
+        Map<AppUser, List<UserItem>> itemsByUser = userItemRepo.findAllWithUsersAndItems()
+                .stream()
+                .collect(Collectors.groupingBy(UserItem::getAppUser));
 
-        for (AppUser appUser: userItemRepo.findDistinctId()) {
-            UserInvenoryValue userInvenoryValue = new UserInvenoryValue();
+        for (Map.Entry<AppUser, List<UserItem>> entry : itemsByUser.entrySet()) {
+            AppUser appUser = entry.getKey();
             BigDecimal inventoryValue = ZERO;
             BigDecimal inventoryValueTaxed = ZERO;
 
-            log.info("running calculations for " + appUser.getUsername());
+            log.info("running calculations for {}", appUser.getUsername());
 
-            for (UserItem userItem: userItemRepo.findAllbyUserId(appUser)) {
+            for (UserItem userItem : entry.getValue()) {
                 BigDecimal itemPrice = userItem.getCsgoItem().getLowestPrice();
                 BigDecimal taxedItemValue = (0 > itemPrice.compareTo(new BigDecimal("0.22")))
                         ? itemPrice.subtract(new BigDecimal("0.02"))
@@ -54,11 +55,12 @@ public class UserInventoryValueService {
                 inventoryValue = inventoryValue.add(qty.multiply(itemPrice));
                 inventoryValueTaxed = inventoryValueTaxed.add(qty.multiply(taxedItemValue));
             }
-            userInvenoryValue.setInventoryValueTaxed(inventoryValueTaxed);
-            userInvenoryValue.setInventoryValue(inventoryValue);
-            userInvenoryValue.setDateOfValue(LocalDateTime.now(ZoneOffset.UTC));
-            userInvenoryValue.setAppUser(appUserRepo.findById(appUser.getId()).get());
 
+            UserInvenoryValue userInvenoryValue = new UserInvenoryValue();
+            userInvenoryValue.setInventoryValue(inventoryValue);
+            userInvenoryValue.setInventoryValueTaxed(inventoryValueTaxed);
+            userInvenoryValue.setDateOfValue(LocalDateTime.now(ZoneOffset.UTC));
+            userInvenoryValue.setAppUser(appUser);
             userInventoryValueRepo.save(userInvenoryValue);
         }
     }

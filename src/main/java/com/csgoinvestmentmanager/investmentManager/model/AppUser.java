@@ -26,7 +26,7 @@ public class AppUser implements Serializable {
     @Column(nullable = false, unique = true, name = "user_name")
     private String username;
     private String password;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Collection<Role> roles = new ArrayList<>();
     private boolean enabled;
     @Column(name = "profile_picture")

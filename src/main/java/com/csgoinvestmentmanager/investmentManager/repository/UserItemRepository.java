@@ -20,5 +20,7 @@ public interface UserItemRepository extends JpaRepository<UserItem, Long> {
     @Query("FROM UserItem WHERE appUser = ?1")
     List<UserItem> findAllbyUserId(AppUser appUser);
 
+    @Query("SELECT ui FROM UserItem ui JOIN FETCH ui.csgoItem JOIN FETCH ui.appUser")
+    List<UserItem> findAllWithUsersAndItems();
 
 }
