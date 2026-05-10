@@ -82,7 +82,7 @@ public class AppUserServiceImplementation implements AppUserService, UserDetails
         appuser.getRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         });
-        authorities.forEach(role -> log.info("the Users authorities" + role.toString()));
+        authorities.forEach(role -> log.info("the Users authorities: {}", role));
         return new User(appuser.getUsername(),appuser.getPassword(),authorities);
     }
 }

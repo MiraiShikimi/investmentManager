@@ -36,9 +36,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,6 +55,13 @@ public class AuthService {
 
     @Value("${key}")
     private String key;
+
+    private Algorithm algorithm;
+
+    @PostConstruct
+    void init() {
+        this.algorithm = Algorithm.HMAC256(key.getBytes(StandardCharsets.UTF_8));
+    }
 
     private final PasswordEncoder passwordEncoder;
     private final AppUserRepo appUserRepo;
@@ -160,7 +169,6 @@ public class AuthService {
             try {
                 log.info("passed the if statement");
                 String refresh_token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256(key.getBytes());
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
                 String username = decodedJWT.getSubject();
