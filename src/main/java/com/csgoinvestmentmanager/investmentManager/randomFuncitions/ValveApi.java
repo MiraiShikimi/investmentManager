@@ -68,7 +68,12 @@ public class ValveApi {
             }
 
             JsonNode data = objectMapper.readTree(body);
-            String raw = data.get("lowest_price").asText().substring(0, 4).replace(',', '.').replaceAll("-", "0");
+            JsonNode priceNode = data.get("lowest_price");
+            if (priceNode == null) {
+                log.warn("No lowest_price in response for item '{}', keeping existing price", itemName);
+                return currentPrice;
+            }
+            String raw = priceNode.asText().substring(0, 4).replace(',', '.').replaceAll("-", "0");
             BigDecimal newPrice = new BigDecimal(raw);
             log.debug("Updated price for '{}': {} -> {}", itemName, currentPrice, newPrice);
             return newPrice;
